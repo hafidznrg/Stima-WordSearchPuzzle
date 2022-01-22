@@ -42,12 +42,15 @@ bool check(vector<vector<char>> mat, string word, int i, int j, int ver, int hor
     }
     totalComparison++;
     if (idx == n){
-        // cout << word << " (" << i << "," << j << ")" << endl;
-        string warna = "\033[" + to_string(idxcolor) +"m";
-        cout << warna << word << "\033[0m"  << "\tdi posisi (" << i+1 << "," << j+1 << ")" << endl;
+        string warna;
+        if (idxcolor > 5) warna = "\033[1m\033[" + to_string(idxcolor-6+31) +"m";
+        else warna = "\033[" + to_string(idxcolor+31) +"m";
+        // if (n>7) {
+        //     cout << warna << word << "\033[0m"  << "\tdi posisi (" << i+1 << "," << j+1 << ")" << endl;
+        // } else cout << warna << word << "\033[0m"  << "\t\tdi posisi (" << i+1 << "," << j+1 << ")" << endl;
         idx = 0;
         while (idx < n){
-            color[i+ver*idx][j+hor*idx] = "\033[" + to_string(idxcolor) +"m";
+            color[i+ver*idx][j+hor*idx] = warna;
             idx++;
         }
         return true;
@@ -156,7 +159,7 @@ int main(){
     cout << "Keterangan:\n";
 
     for (int i=0; i< word.size(); i++){
-        int idxcolor = i%6 + 31;
+        int idxcolor = i%12;
         checkWord(mat, word[i], row, col, totalComparison, color, idxcolor);
     }
 
