@@ -5,6 +5,7 @@
 using namespace std;
 using namespace std::chrono;
 
+// Fungsi untuk memisahkan substring yang dibatasi oleh karakter spasi
 bool splitline(string line, vector<vector<char>> &mat, vector<vector<string>> &color){
     vector<char> vec;
     vector<string> linecolor;
@@ -23,16 +24,16 @@ bool splitline(string line, vector<vector<char>> &mat, vector<vector<string>> &c
     } else return true;
 }
 
+// Melakukan filter spasi pada setiap kata yang akan dicari kemudian menambahkan ke dalam word. 
 void processWord(string line, vector<string> &word){
-    while (line[0] == ' '){
-        line = line.substr(1,line.length()-1);
+    string temp = "";
+    for (int i=0; i<line.length(); i++){
+        if (line[i] != ' ') temp += line[i];
     }
-    while (line[line.length()-1] == ' '){
-        line = line.substr(0,line.length()-1);
-    }
-    word.push_back(line);
+    word.push_back(temp);
 }
 
+// Fungsi untuk melakukan pencocokan string. Mengembalikan true pencocokan string berhasil, false jika tidak cocok.
 bool check(vector<vector<char>> mat, string word, int i, int j, int ver, int hor, int &totalComparison, vector<vector<string>> &color, int idxcolor){
     int idx = 1;
     int n = word.length();
@@ -45,9 +46,6 @@ bool check(vector<vector<char>> mat, string word, int i, int j, int ver, int hor
         string warna;
         if (idxcolor > 5) warna = "\033[1m\033[" + to_string(idxcolor-6+31) +"m";
         else warna = "\033[" + to_string(idxcolor+31) +"m";
-        // if (n>7) {
-        //     cout << warna << word << "\033[0m"  << "\tdi posisi (" << i+1 << "," << j+1 << ")" << endl;
-        // } else cout << warna << word << "\033[0m"  << "\t\tdi posisi (" << i+1 << "," << j+1 << ")" << endl;
         idx = 0;
         while (idx < n){
             color[i+ver*idx][j+hor*idx] = warna;
@@ -59,7 +57,7 @@ bool check(vector<vector<char>> mat, string word, int i, int j, int ver, int hor
     }
 }
 
-
+// Pencocokan huruf pertama dari sebuah kata kemudian dilanjutkan pencocokan string secara keseluruhan
 void checkWord(vector<vector<char>> mat, string word, int row, int col, int &totalComparison, vector<vector<string>> &color, int idxcolor){
     int n = word.length();
     bool found = false;
@@ -69,50 +67,36 @@ void checkWord(vector<vector<char>> mat, string word, int row, int col, int &tot
             if (mat[i][j] == word[0]){
                 // checking all possibilities
                 // horizontal kanan
-                if (col-j >= n && !found){
-                    found = check(mat, word, i, j, 0, 1, totalComparison, color, idxcolor);
-                }
+                if (col-j >= n && !found) found = check(mat, word, i, j, 0, 1, totalComparison, color, idxcolor);
 
                 // horizontal kiri
-                if (j+1 >= n && !found){
-                    found = check(mat, word, i, j, 0, -1, totalComparison, color, idxcolor);
-                }
+                if (j+1 >= n && !found) found = check(mat, word, i, j, 0, -1, totalComparison, color, idxcolor);
 
                 // vertikal atas
-                if (i+1 >= n && !found){
-                    found = check(mat, word, i, j, -1, 0, totalComparison, color, idxcolor);
-                }
+                if (i+1 >= n && !found) found = check(mat, word, i, j, -1, 0, totalComparison, color, idxcolor);
 
                 // vertikal bawah
-                if (row-i >= n && !found){
-                    found = check(mat, word, i, j, 1, 0, totalComparison, color, idxcolor);
-                }
+                if (row-i >= n && !found) found = check(mat, word, i, j, 1, 0, totalComparison, color, idxcolor);
 
                 // miring kanan atas
-                if (col-j >= n && i+1 >= n && !found){
-                    found = check(mat, word, i, j, -1, 1, totalComparison, color, idxcolor);
-                }
+                if (col-j >= n && i+1 >= n && !found) found = check(mat, word, i, j, -1, 1, totalComparison, color, idxcolor);
 
                 // miring kanan bawah
-                if (col-j >= n && row-i >= n && !found){
-                    found = check(mat, word, i, j, 1, 1, totalComparison, color, idxcolor);
-                }
+                if (col-j >= n && row-i >= n && !found) found = check(mat, word, i, j, 1, 1, totalComparison, color, idxcolor);
 
                 // miring kiri atas
-                if (j+1 >= n && i+1 >= n && !found){
-                    found = check(mat, word, i, j, -1, -1, totalComparison, color, idxcolor);
-                }
+                if (j+1 >= n && i+1 >= n && !found) found = check(mat, word, i, j, -1, -1, totalComparison, color, idxcolor);
 
                 // miring kiri bawah
-                if (j+1 >= n && row-i >= n && !found){
-                    found = check(mat, word, i, j, 1, -1, totalComparison, color, idxcolor);
-                }
+                if (j+1 >= n && row-i >= n && !found) found = check(mat, word, i, j, 1, -1, totalComparison, color, idxcolor);
             }
         }
     }
 }
 
+// Menampilkan puzzle secara keseluruhan.
 void displayPuzzle(vector<vector<char>> mat, vector<vector<string>> color){
+    cout << endl;
     int row = mat.size();
     int col = mat[0].size();
     for (int i=0; i<row; i++){
@@ -121,6 +105,7 @@ void displayPuzzle(vector<vector<char>> mat, vector<vector<string>> color){
         }
         cout  << endl;
     }
+    cout << endl;
 }
 
 int main(){
@@ -156,7 +141,6 @@ int main(){
 
     int row = mat.size(), col = mat[0].size(), lenWord = word.size();
     int totalComparison = 0;
-    cout << "Keterangan:\n";
 
     for (int i=0; i< word.size(); i++){
         int idxcolor = i%12;
@@ -164,7 +148,6 @@ int main(){
     }
 
     // display puzzle
-    cout << endl;
     displayPuzzle(mat, color);
 
     // stop timer
