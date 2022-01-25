@@ -92,6 +92,7 @@ void checkWord(vector<vector<char>> mat, string word, int row, int col, int &tot
             }
         }
     }
+    if (!found) cout << word << " gagal ditemukan\n";
 }
 
 // Menampilkan puzzle secara keseluruhan.
